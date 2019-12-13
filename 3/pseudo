@@ -1,0 +1,7 @@
+create 2d grid
+    we don't know the size so...make it really big??
+create track list to remember intersection points
+start at central port and draw line 1 and mark each point traversed on the grid
+start at central port and draw line 2 and mark each point traversed on the grid. if the point has already been marked, add it to the track list
+find entry in track list with shortest manhattan distance:
+    |x1 - x2| + |y1 - y2|

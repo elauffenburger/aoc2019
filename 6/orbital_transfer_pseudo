@@ -1,0 +1,9 @@
+build graph
+
+find santa
+find yourself
+
+find common ancestor node for yourself and santa
+find parent of santa
+find your parent
+num_transfers = distance from your parent to common + distance from santa's parent to common
