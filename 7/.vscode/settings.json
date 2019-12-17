@@ -4,6 +4,14 @@
         "*.tcc": "cpp",
         "iosfwd": "cpp",
         "iostream": "cpp",
-        "optional": "cpp"
+        "optional": "cpp",
+        "algorithm": "cpp",
+        "memory": "cpp",
+        "random": "cpp",
+        "fstream": "cpp",
+        "istream": "cpp",
+        "ostream": "cpp",
+        "sstream": "cpp",
+        "streambuf": "cpp"
     }
 }

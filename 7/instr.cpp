@@ -40,7 +40,7 @@ void MulProgramOp::exec(VM& vm, const std::vector<ParamMode>& param_modes) {
 }
 
 void InsProgramOp::exec(VM& vm, const std::vector<ParamMode>& param_modes) {
-  auto input = vm.get_input();
+  auto input = vm.read_input();
   auto result_addr = vm.read(vm.pc + 1);
 
   vm.write(result_addr, input);
@@ -51,7 +51,7 @@ void InsProgramOp::exec(VM& vm, const std::vector<ParamMode>& param_modes) {
 void OutProgramOp::exec(VM& vm, const std::vector<ParamMode>& param_modes) {
   auto param = this->resolve_param_value(vm.pc + 1, param_modes.at(0), vm);
 
-  vm.output(param);
+  vm.write_output(param);
 
   vm.pc += 2;
 }

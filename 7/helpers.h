@@ -82,4 +82,15 @@ std::vector<Output> to_vec(Input input) {
   return result;
 }
 
+template <typename T>
+std::vector<std::vector<T>> all_permutations(std::vector<T>& input) {
+  auto results = std::vector<std::vector<T>>();
+
+  do {
+    results.push_back(std::vector<T>(input));
+  } while (next_permutation(input.begin(), input.end()));
+
+  return results;
+}
+
 #endif

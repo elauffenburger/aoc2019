@@ -21,14 +21,30 @@ void VM::load(std::vector<int> program) {
 int VM::read(int addr) const { return this->program.at(addr); }
 void VM::write(int addr, int value) { this->program.at(addr) = value; }
 
-int VM::get_input() { return this->input_val; }
+int VM::read_input() {
+  auto input = this->inputs.front();
+  this->inputs.pop();
 
-void VM::output(int value) {
+  return input;
+}
+
+void VM::write_output(int value) {
   std::cout << "output: " << value << std::endl;
+
+  this->outputs.push(value);
 
   if (value != 0) {
     this->expected_opcode = std::optional<Opcode>(OP_HLT);
   }
+}
+
+void VM::push_input(int input) { this->inputs.push(input); }
+
+int VM::pop_output() {
+  auto output = this->outputs.front();
+  this->outputs.pop();
+
+  return output;
 }
 
 ProgramOp* VM::get_op_from_opcode(int opcode) {
@@ -86,6 +102,8 @@ ProgramInstr* VM::decode_instr(int instr_prefix, std::vector<int> program) {
 }
 
 void VM::run() {
+  this->pc = 0;
+
   while (pc != PC_END) {
     auto instr_prefix = this->read(pc);
     auto instr = decode_instr(instr_prefix, program);
