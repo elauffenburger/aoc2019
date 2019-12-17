@@ -21,20 +21,13 @@ void VM::load(std::vector<int> program) {
 int VM::read(int addr) const { return this->program.at(addr); }
 void VM::write(int addr, int value) { this->program.at(addr) = value; }
 
-int VM::get_input() {
-  return this->output_val;
-}
+int VM::get_input() { return this->input_val; }
 
 void VM::output(int value) {
   std::cout << "output: " << value << std::endl;
 
-  auto next_instr = this->decode_instr(this->read(this->pc + 2), this->program);
-  if (next_instr->op->opcode == OP_HLT) {
-    return;
-  }
-
   if (value != 0) {
-    throw InvalidOutputException();
+    this->expected_opcode = std::optional<Opcode>(OP_HLT);
   }
 }
 
@@ -68,7 +61,7 @@ ProgramInstr* VM::decode_instr(int instr_prefix, std::vector<int> program) {
 
   std::string instr_parts[2] = {};
   if (instr_prefix_str.length() <= 2) {
-    instr_parts[0] = instr_prefix_str.substr(instr_prefix_str.length() - 1);
+    instr_parts[0] = instr_prefix_str;
     instr_parts[1] = std::string("");
   } else {
     instr_parts[0] = instr_prefix_str.substr(2, instr_prefix_str.length() - 2);
@@ -85,7 +78,7 @@ ProgramInstr* VM::decode_instr(int instr_prefix, std::vector<int> program) {
       [](char digit) -> ParamMode { return (ParamMode)atoi(&digit); });
 
   // Pad the unlisted param_modes with the default mode.
-  for (auto i = param_modes->size(); i < op->get_num_params(); i++) {
+  for (auto i = (int)param_modes->size(); i < op->get_num_params(); i++) {
     param_modes->push_back(MODE_POSITION);
   }
 
@@ -96,6 +89,11 @@ void VM::run() {
   while (pc != PC_END) {
     auto instr_prefix = this->read(pc);
     auto instr = decode_instr(instr_prefix, program);
+
+    if (this->expected_opcode.has_value() &&
+        this->expected_opcode.value() != instr->op->opcode) {
+      throw InvalidOutputException();
+    }
 
     instr->exec(*this);
   }

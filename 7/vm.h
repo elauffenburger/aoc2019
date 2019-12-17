@@ -2,6 +2,7 @@
 #define vm_h
 
 #include <vector>
+#include <optional>
 
 #include "instr.h"
 
@@ -10,7 +11,7 @@ class VM {
   int pc;
   std::vector<int> program;
 
-  VM(int output_val) : output_val(output_val) {}
+  VM(int input_val) : input_val(input_val) {}
 
   void load(std::vector<int> program);
 
@@ -26,7 +27,8 @@ class VM {
   void run();
 
  private:
-  int output_val;
+  int input_val;
+  std::optional<Opcode> expected_opcode;
 };
 
 #endif

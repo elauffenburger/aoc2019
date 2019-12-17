@@ -1,5 +1,5 @@
 CC 		= g++
-CCFLAGS	= -Wall 
+CCFLAGS	= -Wall -std=c++17
 SRC 	= $(wildcard *.cpp)
 OBJ		= $(patsubst %.cpp,%.o,$(SRC))
 DEPS	= helpers.h types.h instr.h vm.h problem_helpers.h

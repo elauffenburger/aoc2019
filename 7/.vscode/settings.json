@@ -3,6 +3,7 @@
         "cmath": "cpp",
         "*.tcc": "cpp",
         "iosfwd": "cpp",
-        "iostream": "cpp"
+        "iostream": "cpp",
+        "optional": "cpp"
     }
 }

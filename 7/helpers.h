@@ -75,7 +75,7 @@ template <typename Output, typename Input>
 std::vector<Output> to_vec(Input input) {
   auto result = std::vector<Output>();
 
-  for (auto i = 0; i < input.length(); i++) {
+  for (auto i = 0; i < (int)input.length(); i++) {
     result.push_back(input[i]);
   }
 

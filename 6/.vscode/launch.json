@@ -8,7 +8,7 @@
             "name": "make debug & run",
             "type": "cppdbg",
             "request": "launch",
-            "program": "main",
+            "program": "${workspaceFolder}/main",
             "args": ["input"],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

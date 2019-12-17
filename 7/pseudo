@@ -1,0 +1,16 @@
+init amps
+
+phase_permutations = all_permutations_of([0..4])
+
+best_output <- -1
+for each phases in phase_permutations:
+    last_output <- 0
+    for each (amp, i) in amps:
+        set amp phase value to phases[i]
+        set amp input value to last_output
+        
+        output <- result of running program on amp
+
+        last_output = output
+    
+    best_output <- max(best_output, last_output)
