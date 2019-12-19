@@ -22,6 +22,10 @@ int VM::read(int addr) const { return this->program.at(addr); }
 void VM::write(int addr, int value) { this->program.at(addr) = value; }
 
 int VM::read_input() {
+  if (this->inputs.empty()) {
+    return this->input_reader();
+  }
+
   auto input = this->inputs.front();
   this->inputs.pop();
 
@@ -29,9 +33,12 @@ int VM::read_input() {
 }
 
 void VM::write_output(int value) {
-  std::cout << "output: " << value << std::endl;
+#ifdef DEBUG
+  std::cout << this->name << " output: " << value << std::endl;
+#endif
 
   this->outputs.push(value);
+  this->output_writer(value);
 
   if (value != 0) {
     this->expected_opcode = std::optional<Opcode>(OP_HLT);
@@ -46,6 +53,8 @@ int VM::pop_output() {
 
   return output;
 }
+
+int VM::peek_last_output() { return this->outputs.back(); }
 
 ProgramOp* VM::get_op_from_opcode(int opcode) {
   switch (opcode) {
@@ -101,18 +110,27 @@ ProgramInstr* VM::decode_instr(int instr_prefix, std::vector<int> program) {
   return new ProgramInstr{.op = op, .param_modes = *param_modes};
 }
 
-void VM::run() {
-  this->pc = 0;
+void VM::reset() {
+  pc = 0;
 
+  while(!inputs.empty()) { inputs.pop(); }
+  while(!outputs.empty()) { outputs.pop(); }
+}
+
+void VM::run(bool run_to_output) {
   while (pc != PC_END) {
     auto instr_prefix = this->read(pc);
     auto instr = decode_instr(instr_prefix, program);
 
-    if (this->expected_opcode.has_value() &&
+    if (!run_to_output && this->expected_opcode.has_value() &&
         this->expected_opcode.value() != instr->op->opcode) {
       throw InvalidOutputException();
     }
 
     instr->exec(*this);
+
+    if (run_to_output && instr->op->opcode == OP_OUT) {
+      return;
+    }
   }
 }

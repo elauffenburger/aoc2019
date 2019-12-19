@@ -5,7 +5,7 @@
 
 void ProgramInstr::exec(VM& vm) {
 #ifdef DEBUG
-  printf("executing opcode: %d\n", this->op->opcode);
+  printf("%s: %d\n", vm.name.c_str(), this->op->opcode);
 #endif
 
   this->op->exec(vm, this->param_modes);
@@ -51,9 +51,13 @@ void InsProgramOp::exec(VM& vm, const std::vector<ParamMode>& param_modes) {
 void OutProgramOp::exec(VM& vm, const std::vector<ParamMode>& param_modes) {
   auto param = this->resolve_param_value(vm.pc + 1, param_modes.at(0), vm);
 
-  vm.write_output(param);
+  if (param < 0) {
+    throw std::exception();
+  }
 
   vm.pc += 2;
+
+  vm.write_output(param);
 }
 
 void JitProgramOp::exec(VM& vm, const std::vector<ParamMode>& param_modes) {
