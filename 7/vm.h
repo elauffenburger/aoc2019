@@ -14,13 +14,11 @@ class VM {
   std::string name;
   std::vector<int> program;
   std::function<void(int)> output_writer;
-  std::function<int()> input_reader;
 
   VM(std::string name) : name(name) {
     pc = 0;
     inputs = std::queue<int>();
     outputs = std::queue<int>();
-    output_writer = [](int output) {};
   }
 
   void load(std::vector<int> program);

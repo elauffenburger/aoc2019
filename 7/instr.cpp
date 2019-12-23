@@ -1,7 +1,10 @@
+#include <exception>
 #include <vector>
 
 #include "instr.h"
 #include "vm.h"
+
+class OverflowException : std::exception {};
 
 void ProgramInstr::exec(VM& vm) {
 #ifdef DEBUG
@@ -22,8 +25,13 @@ void AddProgramOp::exec(VM& vm, const std::vector<ParamMode>& param_modes) {
   auto param2 = this->resolve_param_value(vm.pc + 2, param_modes.at(1), vm);
 
   auto result_addr = vm.read(vm.pc + 3);
+  auto result = param1 + param2;
 
-  vm.write(result_addr, param1 + param2);
+  if (result < 0) {
+    throw std::exception();
+  }
+
+  vm.write(result_addr, result);
 
   vm.pc += 4;
 }
@@ -50,10 +58,6 @@ void InsProgramOp::exec(VM& vm, const std::vector<ParamMode>& param_modes) {
 
 void OutProgramOp::exec(VM& vm, const std::vector<ParamMode>& param_modes) {
   auto param = this->resolve_param_value(vm.pc + 1, param_modes.at(0), vm);
-
-  if (param < 0) {
-    throw std::exception();
-  }
 
   vm.pc += 2;
 

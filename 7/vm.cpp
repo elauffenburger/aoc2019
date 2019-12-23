@@ -1,4 +1,5 @@
 #include <exception>
+#include <optional>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -22,10 +23,6 @@ int VM::read(int addr) const { return this->program.at(addr); }
 void VM::write(int addr, int value) { this->program.at(addr) = value; }
 
 int VM::read_input() {
-  if (this->inputs.empty()) {
-    return this->input_reader();
-  }
-
   auto input = this->inputs.front();
   this->inputs.pop();
 
@@ -38,7 +35,10 @@ void VM::write_output(int value) {
 #endif
 
   this->outputs.push(value);
-  this->output_writer(value);
+
+  if (this->output_writer != nullptr) {
+    this->output_writer(value);
+  }
 
   if (value != 0) {
     this->expected_opcode = std::optional<Opcode>(OP_HLT);
@@ -112,9 +112,15 @@ ProgramInstr* VM::decode_instr(int instr_prefix, std::vector<int> program) {
 
 void VM::reset() {
   pc = 0;
+  expected_opcode = std::nullopt;
 
-  while(!inputs.empty()) { inputs.pop(); }
-  while(!outputs.empty()) { outputs.pop(); }
+  while (!inputs.empty()) {
+    inputs.pop();
+  }
+
+  while (!outputs.empty()) {
+    outputs.pop();
+  }
 }
 
 void VM::run(bool run_to_output) {
